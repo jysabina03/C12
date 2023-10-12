@@ -2,7 +2,7 @@
 import math
 
 from pico2d import load_image, get_time
-from sdl2 import SDL_KEYDOWN, SDLK_SPACE, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT
+from sdl2 import SDL_KEYDOWN, SDLK_SPACE, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_a
 
 
 def right_down(e):
@@ -23,6 +23,8 @@ def left_up(e):
 def space_down(e):
     return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
+def a_down(e):
+    return e[0]=='INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_a
 
 def time_out(e):
     return e[0] == 'TIME_OUT'
@@ -110,6 +112,35 @@ class Run:
         boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
         pass
 
+
+class AutoRun:
+
+    @staticmethod
+    def enter(boy,e):
+        if boy.action==0:
+            boy.action=2
+        elif boy.action==1:
+            boy.action=3
+
+        boy.frame = 0
+        boy.start_time = get_time()
+        print('AutoRun Enter')
+
+    @staticmethod
+    def exit(boy,e):
+        print('AutoRun Exit')
+
+    @staticmethod
+    def do(boy):
+        boy.frame = (boy.frame + 1) % 8
+        if get_time() - boy.start_time > 5.0:
+            boy.state_machine.handle_event(('TIME_OUT', 0))
+        print('AutoRun Do')
+
+    @staticmethod
+    def draw(boy):
+        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
+        pass
 
 
 class StateMachine:
