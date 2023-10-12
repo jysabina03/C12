@@ -117,10 +117,11 @@ class AutoRun:
 
     @staticmethod
     def enter(boy,e):
-        if boy.action==0:
-            boy.action=2
-        elif boy.action==1:
-            boy.action=3
+
+        if boy.action == 0:
+            boy.dir=1
+        elif boy.action == 1:
+            boy.dir=0
 
         boy.frame = 0
         boy.start_time = get_time()
@@ -133,13 +134,14 @@ class AutoRun:
     @staticmethod
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
+        boy.x += boy.dir * 10
         if get_time() - boy.start_time > 5.0:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         print('AutoRun Do')
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_draw(boy.frame * 100, boy.action * 100, 100, 100, boy.x, boy.y)
+        boy.image.clip_composite_draw(boy.frame * 100, boy.action * 100, 100, 100, 0,'',boy.x, boy.y,200,200)
         pass
 
 
@@ -148,9 +150,10 @@ class StateMachine:
         self.boy = boy
         self.cur_state = Idle
         self.table = {
-            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, time_out: Sleep},
+            Idle: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, time_out: Sleep,a_down:AutoRun},
             Run: {right_down: Idle, left_down: Idle, left_up: Idle, right_up: Idle},
             Sleep: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, space_down: Idle},
+            AutoRun: {right_down: Run, left_down: Run, left_up: Run, right_up: Run, time_out: Idle},
                       }
 
     def start(self):
@@ -180,6 +183,7 @@ class Boy:
         self.image = load_image('animation_sheet.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
+        self.dir=0
 
     def update(self):
         self.state_machine.update()
