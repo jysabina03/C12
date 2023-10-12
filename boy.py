@@ -118,10 +118,10 @@ class AutoRun:
     @staticmethod
     def enter(boy,e):
 
-        if boy.action == 0:
+        if boy.action == 2:
+            boy.dir=-1
+        elif boy.action == 3:
             boy.dir=1
-        elif boy.action == 1:
-            boy.dir=0
 
         boy.frame = 0
         boy.start_time = get_time()
@@ -141,7 +141,7 @@ class AutoRun:
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_composite_draw(boy.frame * 100, boy.action * 100, 100, 100, 0,'',boy.x, boy.y,200,200)
+        boy.image.clip_composite_draw(boy.frame * 100, (boy.action-2) * 100, 100, 100, 0,'',boy.x, boy.y,200,200)
         pass
 
 
@@ -183,7 +183,6 @@ class Boy:
         self.image = load_image('animation_sheet.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
-        self.dir=0
 
     def update(self):
         self.state_machine.update()
