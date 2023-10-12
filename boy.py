@@ -135,13 +135,19 @@ class AutoRun:
     def do(boy):
         boy.frame = (boy.frame + 1) % 8
         boy.x += boy.dir * 10
+        if boy.x>750:
+            boy.dir*=-1
+            boy.action=2
+        if  boy.x<50:
+            boy.dir*=-1
+            boy.action=3
         if get_time() - boy.start_time > 5.0:
             boy.state_machine.handle_event(('TIME_OUT', 0))
         print('AutoRun Do')
 
     @staticmethod
     def draw(boy):
-        boy.image.clip_composite_draw(boy.frame * 100, (boy.action-2) * 100, 100, 100, 0,'',boy.x, boy.y,200,200)
+        boy.image.clip_composite_draw(boy.frame * 100, (boy.action-2) * 100, 100, 100, 0,'',boy.x, boy.y+30,200,200)
         pass
 
 
